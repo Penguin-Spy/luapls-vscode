@@ -1,8 +1,10 @@
 {
   "name": "luapls",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "penguin-spy",
-  "engines": { "vscode": "^1.94.0" },
+  "engines": {
+    "vscode": "^1.94.0"
+  },
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -21,22 +23,27 @@
       ]
     },
     "configuration": {
-			"type": "object",
-			"title": "luapls",
-			"properties": {
-				"luapls.trace.server": {
-					"scope": "window",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "off",
-					"description": "Traces the communication between VS Code and the language server."
-				}
-			}
-		}
+      "type": "object",
+      "title": "luapls",
+      "properties": {
+        "luapls.executable": {
+          "scope": "window",
+          "type":"string",
+          "description": "The absolute path to the luapls executable. Restart the extension after editing this."
+        },
+        "luapls.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and luapls."
+        }
+      }
+    }
   },
   "activationEvents": [
     "onLanguage:lua"
@@ -45,9 +52,22 @@
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
-    "@types/vscode": "^1.94.0"
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/vscode": "^1.94.0",
+    "yazl": "^3.1.0"
   },
   "license": "MPL-2.0",
-  "repository": { "url": "https://github.com/Penguin-Spy/luapls-vscode/"},
-  "displayName": "luapls"
+  "scripts": {
+    "bundle": "rollup -c && node bundle.js"
+  },
+  "repository": {
+    "url": "https://github.com/Penguin-Spy/luapls-vscode/"
+  },
+  "displayName": "luapls",
+  "description": " A Lua language server.",
+  "categories": [ "Programming Languages" ],
+  "keywords": [ "Lua", "EmmyLua", "IntelliSense"],
+  "icon": "icon.png"
 }

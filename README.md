@@ -3,9 +3,9 @@ A VS Code extension that adds [luapls](https://github.com/raiguard/luapls/) as a
 Like luapls, this extension is under development and not ready for use.
 
 # Installing
-[Build luapls](https://github.com/raiguard/luapls/#build), then copy the executable to this folder.  
-Note that luapls cannot handle Windows-formatted file URIs currently (so it won't even launch).  
-Start the extension from VS Code using Run and Debug.
+Download the extension from [GitHub releases](https://github.com/Penguin-Spy/luapls-vscode/releases/latest), then install the .vsix file in VS Code (click the 3 dots in the title of the Extensions menu).  
+luapls is not bundled currently, so you will need to [build it yourself](https://github.com/raiguard/luapls/#build) and then provide the path to the executable in VS Code's settings.  
+Note that luapls cannot handle Windows-formatted file URIs currently (so it likely won't even launch).
 
 # License
 Copyright © Penguin_Spy 2024  

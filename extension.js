@@ -17,9 +17,22 @@ let client
 
 module.exports.activate = async function (context) {
   console.log("hello world from activate()!")
+  const cfg = vscode.workspace.getConfiguration("luapls")
 
-  // TODO: detect platform and switch which executable is used. alternatively distribute different versions per-platform through the marketplace?
-  const executable = context.asAbsolutePath("luapls")
+  // TODO: bundle executable, then detect platform with os.platform() and switch which executable is used.
+  // alternatively distribute different versions per-platform through the marketplace?
+
+  const executable = cfg.get("executable") //?? context.asAbsolutePath("luapls")
+  if(typeof executable !== "string" || executable.length < 1) {
+    vscode.window.showErrorMessage("no luapls executable provided", "open settings").then(value => {
+      if(value === "open settings") {
+        vscode.commands.executeCommand("workbench.action.openSettings", "@id:luapls.executable")
+      }
+    })
+    return
+  }
+  const lspDebug = cfg.get("trace.server") !== "off"
+
   console.log("using executable", executable)
 
   let disposable = vscode.commands.registerCommand("luapls.hello", () => {
@@ -29,13 +42,9 @@ module.exports.activate = async function (context) {
   client = new lc.LanguageClient(
     "luapls", // id
     "luapls", // display name
-    { command: executable, args: ["lsp", "6"] },  // server options
-    { // client options
-      progressOnInitialization: true,
-      documentSelector: [{ scheme: "file", language: "lua" }],
-      //synchronize: {
-      //  fileEvents: vscode.workspace.createFileSystemWatcher('**/.luarc.json')
-      //}
+    { command: executable, args: ["lsp", lspDebug ? "3" : "2"] },
+    { // LanguageClient options
+      documentSelector: [{ scheme: "file", language: "lua" }]
     }
   )
 
