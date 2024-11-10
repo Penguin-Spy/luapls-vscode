@@ -1,6 +1,6 @@
 {
   "name": "luapls",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "penguin-spy",
   "engines": {
     "vscode": "^1.94.0"
@@ -11,6 +11,10 @@
       {
         "command": "luapls.hello",
         "title": "say hi"
+      },
+      {
+        "command": "luapls.restart",
+        "title": "restart luapls"
       }
     ],
     "menus": {
@@ -62,12 +66,12 @@
   "scripts": {
     "bundle": "rollup -c && node bundle.js"
   },
-  "repository": {
-    "url": "https://github.com/Penguin-Spy/luapls-vscode/"
-  },
+  "repository": { "url": "https://github.com/Penguin-Spy/luapls-vscode.git" },
+  "bugs": { "url": "https://github.com/Penguin-Spy/luapls-vscode/issues" },
   "displayName": "luapls",
-  "description": " A Lua language server.",
+  "description": "A Lua language server.",
   "categories": [ "Programming Languages" ],
   "keywords": [ "Lua", "EmmyLua", "IntelliSense"],
-  "icon": "icon.png"
+  "icon": "icon.png",
+  "preview": true
 }

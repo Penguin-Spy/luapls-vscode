@@ -35,14 +35,17 @@ module.exports.activate = async function (context) {
 
   console.log("using executable", executable)
 
-  let disposable = vscode.commands.registerCommand("luapls.hello", () => {
+  context.subscriptions.push(vscode.commands.registerCommand("luapls.hello", () => {
     vscode.window.showInformationMessage("haiii :3")
-  })
+  }))
+  context.subscriptions.push(vscode.commands.registerCommand("luapls.restart", () => {
+    client.restart()
+  }))
 
   client = new lc.LanguageClient(
     "luapls", // id
     "luapls", // display name
-    { command: executable, args: ["lsp", lspDebug ? "3" : "2"] },
+    { command: executable, args: ["lsp", lspDebug ? "3" : "2"] }, // 2 is commonlog's debug level, luapls checks for level 3 to enable tracing lsp messages sent/received
     { // LanguageClient options
       documentSelector: [{ scheme: "file", language: "lua" }]
     }
@@ -50,8 +53,6 @@ module.exports.activate = async function (context) {
 
   await client.start()
   console.log("started client", client)
-
-  context.subscriptions.push(disposable)
 }
 
 module.exports.deactivate = function () {
