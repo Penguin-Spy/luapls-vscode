@@ -15,6 +15,29 @@ const lc = require("vscode-languageclient/node")
 
 let client
 
+// https://github.com/microsoft/vscode-languageserver-node/blob/8e6bf18f22b2e83b60a27a51447b99acf98c4381/client/src/common/client.ts#L199
+class ErrorHandler {
+  error(error, message, repeatErrorCount) {
+    // same as the default error handler
+    if(repeatErrorCount && repeatErrorCount <= 3) {
+      return { action: 1 } // continue
+    }
+    return { action: 2 } // shutdown
+  }
+
+  async closed() {
+    let message = client.$state === "starting" ? "luapls failed to start" : "luapls crashed"
+    return vscode.window.showErrorMessage(message, "restart", "view output").then(value => {
+      if(value === "restart") {
+        return { action: 2 }  // restart
+      } else if(value === "view output") {
+        client.outputChannel.show(true)
+      }
+      return { action: 1, handled: true } // don't restart, don't spam errors
+    })
+  }
+}
+
 module.exports.activate = async function (context) {
   console.log("hello world from activate()!")
   const cfg = vscode.workspace.getConfiguration("luapls")
@@ -39,7 +62,8 @@ module.exports.activate = async function (context) {
     vscode.window.showInformationMessage("haiii :3")
   }))
   context.subscriptions.push(vscode.commands.registerCommand("luapls.restart", () => {
-    client.restart()
+    if(client.$state !== "startFailed") { client.restart() }
+    else { vscode.window.showInformationMessage("luapls is not running, cannot restart") }
   }))
 
   client = new lc.LanguageClient(
@@ -47,11 +71,19 @@ module.exports.activate = async function (context) {
     "luapls", // display name
     { command: executable, args: ["lsp", lspDebug ? "3" : "2"] }, // 2 is commonlog's debug level, luapls checks for level 3 to enable tracing lsp messages sent/received
     { // LanguageClient options
-      documentSelector: [{ scheme: "file", language: "lua" }]
+      documentSelector: [{ scheme: "file", language: "lua" }],
+      errorHandler: new ErrorHandler(),
+      initializationFailedHandler: () => { client.$state = "stopped"; return false }  // prevent error spam when startup fails
     }
   )
+  // intercept this stupid unhelpful error message
+  const origError = client.error
+  client.error = function (msg, data, show) {
+    if(msg === "luapls client: couldn't create connection to server." || msg == "Restarting server failed") return
+    origError.call(client, msg, data, show)
+  }
 
-  await client.start()
+  await client.start().catch(e => client.error(e))  // we already deal with the error in ErrorHandler, just log it
   console.log("started client", client)
 }
 
