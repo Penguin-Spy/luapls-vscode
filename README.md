@@ -1,6 +1,6 @@
 # luapls-vscode
 A VS Code extension that adds [luapls](https://github.com/raiguard/luapls/) as a language server for Lua.  
-Like luapls, this extension is under development and not ready for use.
+As luapls is no longer in development, this extension is deprecated. see the luapls repository for alternatives.
 
 # Installing
 Download the extension from [GitHub releases](https://github.com/Penguin-Spy/luapls-vscode/releases/latest), then install the .vsix file in VS Code (click the 3 dots in the title of the Extensions menu).  
